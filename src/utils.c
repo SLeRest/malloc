@@ -1,36 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   malloc.c                                           :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sle-rest <sle-rest@42.fr>                    +#+  +:+       +#+      */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/17 11:49:08 by sle-rest          #+#    #+#             */
-/*   Updated: 2019/11/20 15:49:38 by sle-rest         ###   ########.fr       */
+/*   Created: 2019/11/20 13:55:40 by sle-rest          #+#    #+#             */
+/*   Updated: 2019/11/20 15:45:37 by sle-rest         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 
-/*
-	mmap
-	munmap
-	getpagesize
-	getrlimit
-*/
-
-void	*malloc(size_t size)
+/* Pas sur pour le inferieur ou egale */
+int	verify_space(size_t size, t_page *page)
 {
-	t_page		*page;
 	t_memblock	*block;
 
-	printf("lol");
-	if (!size)
-		return NULL;
-	page = get_page_by_size(size);
-	// error handler
-	block = get_membloc(page, size);
-	// error handler
-	// log_history(page, block);
-	return ((void *)block + 1);
+	if (page)
+	{
+		if (page->size - page->allocated >= size)
+			return (1);
+		block = page->block;
+		while (block)
+		{
+			if (block->is_free && block->size <= size)
+				return (1);
+		}
+		return (0);
+	}
+	return (0);
 }
